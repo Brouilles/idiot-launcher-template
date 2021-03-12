@@ -1,22 +1,10 @@
 ﻿using ICSharpCode.SharpZipLib.Zip;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Launcher
 {
@@ -29,7 +17,6 @@ namespace Launcher
     {
         private string m_confUrl = "http://aubega.com/launcher/conf.txt";
 
-        //Variable de configuration
         string m_versionUrl = null, m_zipUrl = null, m_unziPath = null;
         private UpdateState m_updateState;
 
@@ -38,10 +25,10 @@ namespace Launcher
             InitializeComponent();
             m_updateState = UpdateState.search;
 
-            //Si l'évenement this.Close() est appeler.
+            // If the launcher is closed
             this.Closing += delegate
             {
-                if (m_updateState == UpdateState.download) //Si le téléchargement est en cours.
+                if (m_updateState == UpdateState.download) // Check if during download
                 {
                     if (MessageBox.Show("Le téléchargement sera annuler si vous quittez.", "Voulez vous quitter ?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
@@ -50,11 +37,11 @@ namespace Launcher
                 }
             };
 
-            //Téléchargement du fichier de configuration
+            // Download the config file
             WebClient request = new WebClient();
             request.DownloadFile(m_confUrl, "conf.txt");
 
-            //Lecture du fichier
+            // Read the file
             StreamReader initReader;
             initReader = new StreamReader("conf.txt");
 
@@ -72,34 +59,34 @@ namespace Launcher
 
             initReader.Close();
 
-            //Vérification de la version, mise à jour ou non.
-            if (File.Exists("version.txt")) // Voir si le fichier version.txt existe sur l'ordinateur.
+            // Check for update
+            if (File.Exists("version.txt")) // Localversion.txt exist?
             {
-                Stream data = request.OpenRead(m_versionUrl); // Lire la version en ligne du version
+                Stream data = request.OpenRead(m_versionUrl); // Read the online version
                 StreamReader reader = new StreamReader(data);
                 string onlineVersion = reader.ReadLine();
                 reader.Close();
 
-                StreamReader localVersionStream;//Local
+                StreamReader localVersionStream; // Local
                 localVersionStream = new StreamReader("version.txt");
                 string localVersion = localVersionStream.ReadLine();
                 localVersionStream.Close();
 
-                if (onlineVersion == localVersion) //Si il existe, vérifier que le client est à jour
+                if (onlineVersion == localVersion) // If a local version exist, compare with the last available
                 {
-                    //Tout est à jour
+                    // Already up to date
                     m_updateState = UpdateState.update;
                 }
                 else
                 {
-                    //Mise à jour
+                    // Update
                     m_updateState = UpdateState.available;
                     Download();
                 }
             }
-            else //Si il n'existe pas, alors mise à jour.
+            else // If the local file doesn't exist, so download
             {
-                //Mise à jour
+                // Update available
                 m_updateState = UpdateState.available;
                 Download();
             }
@@ -111,7 +98,7 @@ namespace Launcher
             if (m_updateState == UpdateState.available)
             {
                 m_updateState = UpdateState.download;
-                Play.Content = "Mise à jour en cours ..."; //On change le texte
+                Play.Content = "Mise à jour en cours ...";
                 Play.Margin = new Thickness(304, 104, 0, 0);
 
                 WebClient webClient = new WebClient();
@@ -128,7 +115,7 @@ namespace Launcher
             Play.Margin = new Thickness(602, 104, 0, 0);
             Play.Content = "Jouer";
 
-            if (Directory.Exists(m_unziPath)) //On supprime l'ancienne version.
+            if (Directory.Exists(m_unziPath)) // Remove the old version
             {
                 string[] filePaths = Directory.GetFiles(m_unziPath);
                 foreach (string filePath in filePaths)
@@ -137,7 +124,7 @@ namespace Launcher
 
             Decompress("update.zip", m_unziPath, true);
 
-            //Mettre à jour le version.txt local
+            // Update the local version.txt
             WebClient webClient = new WebClient();
             webClient.DownloadFile(new Uri(m_versionUrl), "version.txt");
 
@@ -149,7 +136,7 @@ namespace Launcher
             Play.Content = "Mise à jour en cours (" + e.ProgressPercentage + "%)";
         }
 
-        //Button Event
+        // Events
         private void WebSite_Click(object sender, RoutedEventArgs e)
         {
             Process.Start("https://minecraft.net/");
@@ -164,7 +151,7 @@ namespace Launcher
         {
             if (m_updateState == UpdateState.update)
             {
-                //Lancement de votre exécutable
+                // Start the .exe file
                 System.Diagnostics.ProcessStartInfo start = new System.Diagnostics.ProcessStartInfo();
                 start.FileName = ".exe";
                 start.WorkingDirectory = m_unziPath;
@@ -172,10 +159,10 @@ namespace Launcher
             }
         }
 
-        //Unzip
+        // Unzip
         public bool Decompress(string source, string destinationDirectory, bool deleteOriginal = false)
         {
-            //Ouverture d'un nouveau contexte ZipInputStream (Librairie)
+            // Open a ZipInputStream context
             using (var zipStream = new ZipInputStream(File.OpenRead(source)))
             {
                 ZipEntry entry = null;
