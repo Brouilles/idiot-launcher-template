@@ -1,0 +1,50 @@
+﻿<Window x:Class="Launcher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Launcher"
+        mc:Ignorable="d"
+        Background="#000000"
+        Title="MainWindow" Height="445" Width="790" 
+        ResizeMode="NoResize" WindowStyle="None" 
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <Style x:Key="buttonText" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ControlTemplate.Resources>
+                            <Style x:Key="contentStyle">
+                                <Setter Property="Control.Background" Value="{x:Null}" />
+                                <Setter Property="Control.Foreground" Value="#FFE2E2E2" />
+                                <Setter Property="Control.BorderBrush" Value="{x:Null}" />
+                                <Setter Property="Control.FontSize" Value="32" />
+                            </Style>
+                        </ControlTemplate.Resources>
+                        <Grid>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Name="content" Style="{StaticResource contentStyle}">
+                            </ContentPresenter>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#FFC5C5C5" />
+                    <Setter Property="BorderBrush" Value="{x:Null}" />
+                    <Setter Property="Background" Value="{x:Null}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Button x:Name="Play" Style="{StaticResource buttonText}" Content="Play" HorizontalAlignment="Left" Margin="622,-188,0,0" VerticalAlignment="Center" Cursor="Hand" IsDefault="True" Click="Play_Click"/>
+        <Button x:Name="Options" Style="{StaticResource buttonText}" Content="Settings" HorizontalAlignment="Left" Margin="566,-104,0,0" VerticalAlignment="Center" Cursor="Hand"/>
+        <Button x:Name="MySite" Style="{StaticResource buttonText}" Content="Website" HorizontalAlignment="Left" Margin="567,0,0,0" VerticalAlignment="Center" Cursor="Hand" Click="WebSite_Click"/>
+        <Button x:Name="Exit" Style="{StaticResource buttonText}" Content="Quit" HorizontalAlignment="Left" Margin="619,104,0,0" VerticalAlignment="Center" Cursor="Hand" Click="Exit_Click" IsCancel="True"/>
+
+        <Label x:Name="LabelVersion" Content="Version 1.0.0.0" HorizontalAlignment="Left" Margin="703,419,0,0" VerticalAlignment="Top"/>
+    </Grid>
+</Window>
